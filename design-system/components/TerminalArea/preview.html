@@ -1,0 +1,30 @@
+<!-- @dsCard group="Desktop" height=240 subtitle="點一下就能打字，試試 help" -->
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin:0; height:100%; background:var(--desk); }
+  #root { height:240px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+  var TD = window.TerminalDesktop;
+  var term = TD.TerminalArea({
+    active: true,
+    lines: [
+      { text: 'PS C:\\Users\\me> git status', tone: 'cmd' },
+      'On branch main',
+      { text: 'Your branch is up to date with origin/main.', tone: 'muted' },
+      { text: 'PS C:\\Users\\me> npm test', tone: 'cmd' },
+      { text: '✓ 42 tests passed', tone: 'ok' },
+      { text: '! 1 deprecated package', tone: 'warn' },
+      { text: '✗ build/out.js not found', tone: 'error' }
+    ]
+  });
+  document.getElementById('root').appendChild(term);
+</script>
+</body>
+</html>

@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com">
+<title>自製桌面終端機</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="bundle.css">
+<link rel="stylesheet" href="../node_modules/@xterm/xterm/css/xterm.css">
+<style>
+  html, body { margin: 0; height: 100%; overflow: hidden; background: transparent; }
+  .td-mini { width: 100vw; height: 100vh; box-sizing: border-box; background: var(--desk); }
+  /* A copy of the terminal stage at full size, scaled down to fit. */
+  .pip-stage { position: absolute; left: 0; top: 0; background: var(--desk); transform-origin: 0 0; }
+  .pip-term { position: absolute; top: var(--space-4); left: var(--space-6); right: var(--space-6); bottom: var(--space-4); }
+  .xterm .xterm-viewport { background: var(--desk) !important; overflow: hidden !important; }
+</style>
+</head>
+<body>
+<script src="../node_modules/@xterm/xterm/lib/xterm.js"></script>
+<script src="bundle.js"></script>
+<script src="pip.js"></script>
+</body>
+</html>

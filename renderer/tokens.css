@@ -1,0 +1,25 @@
+/* Terminal Desktop tokens (from design-system/tokens.json) */
+:root {
+  --desk: #0b0f14;
+  --surface: #141a22;
+  --surface-glass: rgba(20, 26, 34, 0.78);
+  --line: #263040;
+  --ink: #d7e0ea;
+  --ink-muted: #8b98a8;
+  --phosphor: #3ddc97;
+  --focus: #5cc8ff;
+  --warn: #f5b041;
+  --error: #ff6b6b;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-4: 16px;
+  --space-6: 24px;
+
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  --font-mono: "JetBrains Mono", "Cascadia Code", Consolas, ui-monospace, monospace;
+  --font-sans: "Inter", "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+}

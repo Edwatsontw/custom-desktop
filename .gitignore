@@ -1,0 +1,13 @@
+# Installed packages (restore with: npm install)
+node_modules/
+
+# Backed-up Windows startup shortcuts (local to this computer)
+停用的開機捷徑/
+
+# Logs and OS clutter
+*.log
+Thumbs.db
+desktop.ini
+
+# Your own settings (startup programs, paths). Copy config.example.json to start.
+config.json

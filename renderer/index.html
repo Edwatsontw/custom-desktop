@@ -1,0 +1,30 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Security-Policy"
+      content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' https://fonts.gstatic.com; img-src 'self' data:; media-src 'self' blob: mediastream:">
+<title>自製桌面</title>
+<link rel="stylesheet" href="tokens.css">
+<link rel="stylesheet" href="bundle.css">
+<link rel="stylesheet" href="../node_modules/@xterm/xterm/css/xterm.css">
+<link rel="stylesheet" href="app.css">
+</head>
+<body>
+<div class="td-desk" id="desk">
+  <div id="sidebar-slot"></div>
+  <div class="td-stage" id="stage">
+    <div class="app-terms" id="terms"></div>
+    <div class="td-corner" id="corner"></div>
+  </div>
+</div>
+<!-- Swap animation: the desktop picture full size, and the frame the shrunken terminal lands in. -->
+<video class="app-swap-video" id="swap-video" muted autoplay playsinline></video>
+<div class="app-swap-frame" id="swap-frame" aria-hidden="true"><span class="td-mini__label" id="swap-label"></span></div>
+<script src="../node_modules/@xterm/xterm/lib/xterm.js"></script>
+<script src="../node_modules/@xterm/addon-fit/lib/addon-fit.js"></script>
+<script src="../node_modules/@xterm/addon-serialize/lib/addon-serialize.js"></script>
+<script src="bundle.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

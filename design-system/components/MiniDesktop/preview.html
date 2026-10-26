@@ -1,0 +1,112 @@
+<!-- @dsCard group="Desktop" height=300 subtitle="拖曳可移動；點一下交換畫面，再點角落的終端機或按 Ctrl + Alt + Z 換回來" -->
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin:0; height:100%; background:var(--desk); }
+  .frame { position:relative; height:300px; overflow:hidden; }
+  .frame > .td-desk { height:100%; }
+  .td-stage { transform-origin:0 0; }
+  .td-stage.is-swapping { position:relative; z-index:3; overflow:hidden; }
+  .full { position:absolute; inset:0; z-index:2; display:none; background:#33506a; transform-origin:0 0; }
+  .full .td-edge { position:absolute; left:0; top:0; bottom:0; }
+  .full .note { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); color:#fff; font:13px/18px system-ui, sans-serif; text-shadow:0 1px 2px rgba(0,0,0,.6); }
+  .back { position:absolute; z-index:4; display:none; }
+  /* Transparent so the shrunken terminal underneath shows through the frame. */
+  .back .td-mini { width:100%; height:100%; background:transparent; }
+</style>
+</head>
+<body>
+<div class="frame" id="frame">
+  <div class="td-desk" id="desk"></div>
+  <div class="full" id="full"><span class="note">原有桌面（示意）</span></div>
+  <div class="back" id="back"></div>
+</div>
+<script>
+  var TD = window.TerminalDesktop;
+  var tabs = [{ id: 'dev', label: 'dev', active: true }, { id: 'build', label: 'build', activity: true }];
+  var frame = document.getElementById('frame');
+  var desk = document.getElementById('desk');
+  var full = document.getElementById('full');
+  var back = document.getElementById('back');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var ease = { duration: reduce ? 0 : 320, easing: 'cubic-bezier(0.2, 0, 0, 1)', fill: 'forwards' };
+
+  var sidebar = TD.TabSidebar({ tabs: tabs });
+  desk.appendChild(sidebar);
+  var stage = document.createElement('div');
+  stage.className = 'td-stage';
+  stage.appendChild(TD.TerminalArea({
+    interactive: false,
+    lines: [{ text: 'PS C:\\Users\\me> npm run dev', tone: 'cmd' }, { text: 'ready on http://localhost:3000', tone: 'ok' }]
+  }));
+  var corner = document.createElement('div');
+  corner.className = 'td-corner';
+  var mini = TD.MiniDesktop({ preview: true, draggable: true, onOpen: swap });
+  Object.assign(mini.style, { width: '160px', height: '90px', position: 'absolute', top: '12px', right: '16px', zIndex: 2 });
+  stage.appendChild(corner);
+  stage.appendChild(mini);
+  desk.appendChild(stage);
+
+  full.appendChild(TD.EdgeStrip({ tabs: tabs, onSelect: unswap }));
+  var backMini = TD.MiniDesktop({ label: 'dev', hint: '點擊返回', onOpen: unswap });
+  back.appendChild(backMini);
+
+  var state = null;
+  function rel(el) {
+    var f = frame.getBoundingClientRect(), r = el.getBoundingClientRect();
+    return { x: r.left - f.left, y: r.top - f.top, w: r.width, h: r.height };
+  }
+  function shrinkTo(r, W, H) { return 'translate(' + r.x + 'px,' + r.y + 'px) scale(' + (r.w / W) + ',' + (r.h / H) + ')'; }
+
+  function swap() {
+    if (state) return;
+    var W = frame.clientWidth, H = frame.clientHeight;
+    var m = rel(mini), s = rel(stage);
+    // The small window stays put: the terminal lands where the mini desktop is, same width.
+    var k = m.w / s.w;
+    var box = { x: m.x, y: m.y, w: m.w, h: Math.round(s.h * k) };
+    var to = 'translate(' + (box.x - s.x) + 'px,' + (box.y - s.y) + 'px) scale(' + k + ')';
+    full.style.display = 'block';
+    stage.classList.add('is-swapping');
+    var a = [
+      full.animate([{ transform: shrinkTo(m, W, H) }, { transform: 'none' }], ease),
+      stage.animate([{ transform: 'none', borderRadius: '0px' }, { transform: to, borderRadius: (8 / k) + 'px' }], ease),
+      sidebar.animate([{ opacity: 1 }, { opacity: 0 }], ease),
+      corner.animate([{ opacity: 1 }, { opacity: 0 }], ease),
+      mini.animate([{ opacity: 1 }, { opacity: 0 }], ease)
+    ];
+    state = { m: m, to: to, k: k, anims: a };
+    a[0].finished.then(function () {
+      Object.assign(back.style, { display: 'block', left: box.x + 'px', top: box.y + 'px', width: box.w + 'px', height: box.h + 'px' });
+      backMini.setMedia(null);
+    });
+  }
+
+  function unswap() {
+    if (!state) return;
+    var s = state; state = null;
+    var W = frame.clientWidth, H = frame.clientHeight;
+    back.style.display = 'none';
+    s.anims.forEach(function (x) { x.cancel(); });
+    var a = [
+      full.animate([{ transform: 'none' }, { transform: shrinkTo(s.m, W, H) }], ease),
+      stage.animate([{ transform: s.to, borderRadius: (8 / s.k) + 'px' }, { transform: 'none', borderRadius: '0px' }], ease),
+      sidebar.animate([{ opacity: 0 }, { opacity: 1 }], ease),
+      corner.animate([{ opacity: 0 }, { opacity: 1 }], ease),
+      mini.animate([{ opacity: 0 }, { opacity: 1 }], ease)
+    ];
+    a[0].finished.then(function () {
+      a.forEach(function (x) { x.cancel(); });
+      full.style.display = 'none';
+      stage.classList.remove('is-swapping');
+    });
+  }
+
+  document.addEventListener('keydown', function (e) {
+    if (e.ctrlKey && e.altKey && String(e.key).toLowerCase() === 'z') { e.preventDefault(); unswap(); }
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,26 @@
+{
+    "shell":  "powershell.exe",
+    "shellArgs":  [
+                      "-NoLogo"
+                  ],
+    "returnShortcut":  "Control+Alt+Z",
+    "returnShortcutLabel":  "Ctrl + Alt + Z",
+    "miniDesktopFps":  10,
+    "startupTabs":  [
+
+                    ],
+    "apps":  [
+                 {
+                     "label":  "檔案總管",
+                     "command":  "explorer.exe"
+                 },
+                 {
+                     "label":  "記事本",
+                     "command":  "notepad.exe"
+                 },
+                 {
+                     "label":  "工作管理員",
+                     "command":  "taskmgr.exe"
+                 }
+             ]
+}

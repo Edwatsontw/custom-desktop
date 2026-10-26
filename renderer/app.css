@@ -1,0 +1,59 @@
+html, body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--desk);
+}
+.td-desk { height: 100vh; }
+#sidebar-slot { min-height: 0; }
+
+.app-terms { position: absolute; inset: 0; }
+.app-term {
+  position: absolute;
+  top: var(--space-4);
+  left: var(--space-6);
+  right: var(--space-6);
+  bottom: var(--space-4);
+  visibility: hidden;
+}
+.app-term.is-on { visibility: visible; }
+.xterm .xterm-viewport { background: var(--desk) !important; }
+.xterm-viewport::-webkit-scrollbar { width: 8px; }
+.xterm-viewport::-webkit-scrollbar-thumb { background: var(--line); border-radius: var(--radius-sm); }
+
+.td-mini__screen > video { background: var(--surface); }
+
+/* Draggable mini window: starts top right. It grows with the screen — about 1/7.5 of the width
+   (256px on a 1920px-wide screen), never smaller than 192px or larger than 384px — and stays 16:9.
+   The clock sits below its starting spot. */
+:root { --mini-w: clamp(192px, 13.4vw, 384px); }
+.app-mini { position: absolute; top: var(--space-4); right: var(--space-6); z-index: 5; width: var(--mini-w); height: auto; aspect-ratio: 16 / 9; }
+.td-corner { top: calc(var(--space-4) * 2 + var(--mini-w) * 9 / 16); }
+
+/* ---------- Swap animation ---------- */
+.app-swap-video {
+  display: none;
+  position: fixed;
+  z-index: 2;
+  object-fit: fill;
+  transform-origin: 0 0;
+  pointer-events: none;
+  background: var(--surface);
+}
+.td-stage.is-swapping {
+  z-index: 3;
+  transform-origin: 0 0;
+  overflow: hidden;
+  will-change: transform;
+}
+.app-swap-frame {
+  display: none;
+  position: fixed;
+  z-index: 4;
+  box-sizing: border-box;
+  border: 1px solid var(--line);
+  border-radius: var(--radius-md);
+  pointer-events: none;
+}
+.td-stage.is-narrow .td-mini { width: 192px; height: 108px; }
+.td-stage.is-narrow .td-clock { display: none; }

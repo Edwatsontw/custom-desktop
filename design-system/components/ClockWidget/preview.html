@@ -1,0 +1,29 @@
+<!-- @dsCard group="Desktop" height=150 -->
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin:0; height:100%; }
+  body { background:var(--desk); font-family:var(--font-mono); }
+  .stage { position:relative; height:150px; overflow:hidden; }
+  .behind { padding:var(--space-4) var(--space-6); color:var(--ink-muted); font-size:14px; line-height:20px; white-space:pre; }
+  .row { position:absolute; top:var(--space-4); right:var(--space-6); display:flex; gap:var(--space-4); align-items:flex-start; }
+</style>
+</head>
+<body>
+<div class="stage">
+  <div class="behind" aria-hidden="true">PS C:\Users\me> ping 1.1.1.1
+Reply from 1.1.1.1: time=8ms
+Reply from 1.1.1.1: time=9ms
+Reply from 1.1.1.1: time=8ms</div>
+  <div class="row" id="root"></div>
+</div>
+<script>
+  var TD = window.TerminalDesktop;
+  var root = document.getElementById('root');
+  root.appendChild(TD.ClockWidget());
+  root.appendChild(TD.ClockWidget({ compact: true, date: false }));
+</script>
+</body>
+</html>

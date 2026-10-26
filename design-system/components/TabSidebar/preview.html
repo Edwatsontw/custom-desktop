@@ -1,0 +1,25 @@
+<!-- @dsCard group="Terminal" height=300 subtitle="點分頁切換，雙擊改名，+ 新分頁" -->
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin:0; height:100%; background:var(--desk); }
+  #root { height:300px; width:220px; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script>
+  var TD = window.TerminalDesktop;
+  document.getElementById('root').appendChild(TD.TabSidebar({
+    tabs: [
+      { id: 'dev', label: 'dev', active: true },
+      { id: 'build', label: 'build', activity: true },
+      { id: 'ssh', label: 'ssh prod' },
+      { id: 'old', label: 'test', exited: true }
+    ]
+  }));
+</script>
+</body>
+</html>

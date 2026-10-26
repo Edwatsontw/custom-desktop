@@ -1,0 +1,26 @@
+<!-- @dsCard group="Desktop" height=260 subtitle="滑鼠移到左邊細條展開分頁" -->
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<style>
+  html, body { margin:0; height:100%; }
+  .wall { position:relative; height:260px; background:#33506a; overflow:hidden; }
+  .wall .td-edge { position:absolute; left:0; top:0; bottom:0; }
+  .note { position:absolute; right:16px; bottom:12px; color:#fff; font:11px/14px system-ui, sans-serif; text-shadow:0 1px 2px rgba(0,0,0,.6); }
+</style>
+</head>
+<body>
+<div class="wall" id="wall"><span class="note">示意：原有桌面全螢幕</span></div>
+<script>
+  var TD = window.TerminalDesktop;
+  document.getElementById('wall').appendChild(TD.EdgeStrip({
+    tabs: [
+      { id: 'dev', label: 'dev', active: true },
+      { id: 'build', label: 'build', activity: true },
+      { id: 'ssh', label: 'ssh prod' }
+    ]
+  }));
+</script>
+</body>
+</html>

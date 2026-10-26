@@ -1,0 +1,17 @@
+{
+  "name": "custom-desktop",
+  "version": "0.1.0",
+  "description": "自製桌面：終端機與原有桌面分區顯示（Terminal Desktop 設計系統）",
+  "main": "main.js",
+  "private": true,
+  "scripts": {
+    "start": "electron ."
+  },
+  "dependencies": {
+    "@lydell/node-pty": "1.2.0-beta.18",
+    "@xterm/addon-fit": "0.11.0",
+    "@xterm/addon-serialize": "0.14.0",
+    "@xterm/xterm": "6.0.0",
+    "electron": "45.0.0"
+  }
+}
