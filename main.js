@@ -71,9 +71,25 @@ function startupSpec(index) {
   return { command: s.command, cwd: s.cwd || path.dirname(s.command) };
 }
 
-function createShell(id, cols, rows, startupIndex) {
+// Files that can be opened as a tab (double-click / "open with" / launcher): batch files.
+const RUNNABLE = /\.(bat|cmd)$/i;
+function fileSpec(file) {
+  const full = path.resolve(String(file || ''));
+  if (!RUNNABLE.test(full) || !fs.existsSync(full)) return null;
+  return { command: full, cwd: path.dirname(full) };
+}
+
+// What a tab runs: null = the normal shell, a number = config.startupTabs[n], { file } = a batch file.
+function specFor(source) {
+  if (source == null) return null;
+  if (typeof source === 'number') return startupSpec(source);
+  if (typeof source === 'object' && source.file) return fileSpec(source.file);
+  return null;
+}
+
+function createShell(id, cols, rows, source) {
   if (shells.has(id)) return;
-  const spec = startupIndex == null ? null : startupSpec(startupIndex);
+  const spec = specFor(source);
   const file = spec ? 'cmd.exe' : config.shell;
   const args = spec ? '/c "' + spec.command + '"' : config.shellArgs;
   const cwd = spec && fs.existsSync(spec.cwd) ? spec.cwd : os.homedir();
@@ -362,7 +378,7 @@ ipcMain.handle('file:save-text', async (_e, suggestedName, text) => {
 
 // Open a startup tab's folder in File Explorer.
 ipcMain.on('tab:open-folder', (_e, startupIndex) => {
-  const spec = startupSpec(startupIndex);
+  const spec = specFor(startupIndex);
   shell.openPath(spec ? spec.cwd : os.homedir());
 });
 
@@ -432,7 +448,40 @@ app.whenReady().then(() => {
     console.error('無法註冊快捷鍵 ' + config.returnShortcut + '，可能已被其他程式占用。');
   }});
 
-app.on('second-instance', () => returnToTerminal());
+/* ---------- Opening batch files in a tab ---------- */
+
+// Launching the app with a .bat/.cmd path (e.g. 開啟於自製桌面.vbs, or a file association) opens it
+// as a new tab and brings the terminal forward. If the app is already running, Windows starts a
+// second copy, which hands its arguments to this one through 'second-instance' and exits.
+let pageReady = false;
+let pendingFiles = [];
+
+function filesFromArgv(argv) {
+  return (argv || []).slice(1).filter((a) => RUNNABLE.test(a) && fs.existsSync(a)).map((a) => path.resolve(a));
+}
+
+function openFiles(files) {
+  if (!files.length) return;
+  if (!pageReady || !mainWin) { pendingFiles.push(...files); return; }
+  returnToTerminal();
+  files.forEach((f) => mainWin.webContents.send('tab:open-file', f));
+}
+
+// The page asks once it is set up; files given before that wait here.
+ipcMain.handle('tab:take-pending-files', (e) => {
+  if (mainWin && e.sender === mainWin.webContents) pageReady = true;
+  const files = pendingFiles;
+  pendingFiles = [];
+  return files;
+});
+
+pendingFiles.push(...filesFromArgv(process.argv));
+
+app.on('second-instance', (_e, argv) => {
+  const files = filesFromArgv(argv);
+  if (files.length) openFiles(files);
+  else returnToTerminal();
+});
 app.on('will-quit', () => {
   globalShortcut.unregisterAll();
   for (const id of [...shells.keys()]) killShell(id);

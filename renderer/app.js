@@ -45,7 +45,7 @@
       localStorage.setItem('tabs', JSON.stringify(plain.map((t) => t.label)));
       localStorage.setItem('activeIndex', String(plain.findIndex((t) => t.active)));
       const names = {};
-      tabs.forEach((t) => { if (t.startupIndex != null) names[t.startupIndex] = t.label; });
+      tabs.forEach((t) => { if (typeof t.startupIndex === 'number') names[t.startupIndex] = t.label; });
       localStorage.setItem('startupLabels', JSON.stringify(names));
     } catch (e) { /* not essential */ }
   }
@@ -647,4 +647,15 @@
   if (start) showTab(start.id);
 
   startCapture();
+
+  /* ---------- Batch files opened from Windows ---------- */
+
+  // A .bat/.cmd opened with 自製桌面 runs in its own new tab (in the file's folder), shown at once.
+  // Like a startup tab it asks before closing while running, and Enter reruns it once it ends.
+  function openFileTab(file) {
+    const name = String(file).split(/[\\/]/).pop();
+    createTab(name, true, { file });
+  }
+  desk.onOpenFile(openFileTab);
+  (await desk.takePendingFiles()).forEach(openFileTab);
 })();

@@ -20,6 +20,8 @@ contextBridge.exposeInMainWorld('desk', {
   tabsGet: () => ipcRenderer.invoke('tabs:get'),
   onTabs: (fn) => on('tabs', fn),
   onTabNew: (fn) => on('tab:new', fn),
+  onOpenFile: (fn) => on('tab:open-file', fn),
+  takePendingFiles: () => ipcRenderer.invoke('tab:take-pending-files'),
   onTabRestart: (fn) => on('tab:restart', fn),
 
   // Modes
