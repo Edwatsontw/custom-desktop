@@ -268,16 +268,29 @@ function enterDesktop(swap) {
   placePip(swap);
 }
 
-function returnToTerminal(tabId) {
+// Windows often refuses to bring a background app forward (it just flashes the taskbar button).
+// Briefly making the window topmost puts it above everything, then it goes back to normal so
+// other windows can be opened over it again.
+function bringToFront(win) {
+  if (win.isMinimized()) win.restore();
+  win.setAlwaysOnTop(true, 'screen-saver');
+  win.show();
+  win.moveTop();
+  win.focus();
+  setTimeout(() => { if (!win.isDestroyed()) win.setAlwaysOnTop(false); }, 200);
+}
+
+// instant: skip the swap animation (the shortcut wants the terminal right now).
+function returnToTerminal(tabId, opts) {
   if (!mainWin) return;
+  const instant = !!(opts && opts.instant);
   const fromDesktop = mode === 'desktop';
   mode = 'terminal';
   if (stripWin) stripWin.hide();
-  mainWin.show();
-  mainWin.focus();
-  mainWin.webContents.send('desk:return', { tabId: tabId || null, swap: fromDesktop });
+  bringToFront(mainWin);
+  mainWin.webContents.send('desk:return', { tabId: tabId || null, swap: fromDesktop, instant });
   // The page shows the same picture as the mini terminal for a moment, so hide it just after.
-  if (pipWin) setTimeout(() => { if (mode === 'terminal') pipWin.hide(); }, 60);
+  if (pipWin) setTimeout(() => { if (mode === 'terminal') pipWin.hide(); }, instant ? 0 : 60);
 }
 
 /* ---------- Menu and launchers ---------- */
@@ -444,7 +457,7 @@ app.whenReady().then(() => {
   screen.on('display-added', fitToScreen);
   screen.on('display-removed', fitToScreen);
 
-  if (!globalShortcut.register(config.returnShortcut, () => returnToTerminal())) {
+  if (!globalShortcut.register(config.returnShortcut, () => returnToTerminal(null, { instant: true }))) {
     console.error('無法註冊快捷鍵 ' + config.returnShortcut + '，可能已被其他程式占用。');
   }});
 

@@ -440,7 +440,8 @@
   let busy = false;
   let running = [];
 
-  function duration() { return reduceMotion.matches ? 0 : 320; }
+  let instantSwap = false; // set while the shortcut swaps back: no animation
+  function duration() { return reduceMotion.matches || instantSwap ? 0 : 320; }
   // The capture is the whole display, the window only its work area: lay the big video over the
   // whole display so it lines up pixel for pixel with the real desktop behind the window.
   function placeBigVideo() {
@@ -616,11 +617,13 @@
   }
   window.addEventListener('resize', clampMini);
 
-  desk.onReturn(async ({ tabId, swap }) => {
+  desk.onReturn(async ({ tabId, swap, instant }) => {
+    instantSwap = !!instant;
     mode = 'terminal';
     startCapture();
     if (swap) await swapToTerminal(tabId);
     else if (tabId && find(tabId)) showTab(tabId);
+    instantSwap = false;
     const a = active();
     if (a) { fitTab(a); a.term.focus(); }
   });
