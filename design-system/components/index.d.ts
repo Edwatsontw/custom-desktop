@@ -33,7 +33,7 @@ export interface TerminalTab {
 
 export interface TabSidebarProps {
   tabs?: TerminalTab[];
-  /** Heading above the list. Default "終端機". */
+  /** Heading above the list. Default "Terminals". */
   title?: string;
   /** Shown in the footer. Default "Ctrl + Alt + Z". */
   shortcutLabel?: string;
@@ -42,7 +42,7 @@ export interface TabSidebarProps {
   onNew?: () => void;
   onClose?: (id: string) => void;
   onRename?: (id: string, label: string) => void;
-  /** "▸ 選單" clicked; anchor is the button's rectangle. */
+  /** "▸ Menu" clicked; anchor is the button's rectangle. */
   onMenu?: (anchor: DOMRect) => void;
   /** A tab was right-clicked at (x, y) in page coordinates; show your tab menu there. */
   onContextMenu?: (id: string, x: number, y: number) => void;
@@ -51,9 +51,9 @@ export interface TabSidebarProps {
 export declare function TabSidebar(props?: TabSidebarProps): HTMLElement;
 
 export interface MiniDesktopProps {
-  /** Caption. Default "我的桌面". */
+  /** Caption. Default "My desktop". */
   label?: string;
-  /** Hover hint. Default "點擊放大"; the swapped-in mini terminal uses "點擊返回". */
+  /** Hover hint. Default "Click to enlarge"; the swapped-in mini terminal uses "Click to return". */
   hint?: string;
   /** Draw a stand-in desktop picture (previews only). */
   preview?: boolean;

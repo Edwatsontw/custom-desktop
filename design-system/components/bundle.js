@@ -15,7 +15,7 @@
     return b;
   }
 
-  var WEEKDAYS = ['週日', '週一', '週二', '週三', '週四', '週五', '週六'];
+  var WEEKDAYS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   function pad(n) { return (n < 10 ? '0' : '') + n; }
   function fmtTime(d, seconds) {
     return pad(d.getHours()) + ':' + pad(d.getMinutes()) + (seconds ? ':' + pad(d.getSeconds()) : '');
@@ -45,7 +45,7 @@
     var root = h('div', 'td-terminal');
     root.tabIndex = 0;
     root.setAttribute('role', 'textbox');
-    root.setAttribute('aria-label', props.label || '桌面終端機');
+    root.setAttribute('aria-label', props.label || 'Desktop terminal');
     var out = h('div', 'td-terminal__output');
     (props.lines || []).forEach(function (l) { appendLine(out, l); });
     var row = h('div', 'td-terminal__row');
@@ -66,10 +66,10 @@
       var c = cmd.trim();
       if (!c) return [];
       if (c === 'clear' || c === 'cls') { out.textContent = ''; return []; }
-      if (c === 'help') return [{ text: '示範指令：help · date · echo <文字> · clear', tone: 'muted' }];
+      if (c === 'help') return [{ text: 'Demo commands: help · date · echo <text> · clear', tone: 'muted' }];
       if (c === 'date') { var d = new Date(); return [fmtDate(d) + ' ' + fmtTime(d, true)]; }
       if (c.indexOf('echo ') === 0) return [c.slice(5)];
-      return [{ text: c.split(' ')[0] + '：預覽模式，指令未實際執行', tone: 'warn' }];
+      return [{ text: c.split(' ')[0] + ': preview only, the command did not run', tone: 'warn' }];
     };
 
     if (props.interactive !== false) {
@@ -104,16 +104,16 @@
     var nextId = tabs.length + 1;
 
     var el = h('aside', 'td-sidebar');
-    el.setAttribute('aria-label', '終端機分頁');
-    el.appendChild(h('div', 'td-sidebar__head', props.title || '終端機'));
+    el.setAttribute('aria-label', 'Terminal tabs');
+    el.appendChild(h('div', 'td-sidebar__head', props.title || 'Terminals'));
     var list = h('div', 'td-tabs');
     list.setAttribute('role', 'tablist');
     list.setAttribute('aria-orientation', 'vertical');
     el.appendChild(list);
-    var add = btn('td-sidebar__new', '+ 新分頁');
+    var add = btn('td-sidebar__new', '+ New tab');
     el.appendChild(add);
     var foot = h('div', 'td-sidebar__foot');
-    var menu = btn('td-sidebar__menu', '▸ 選單');
+    var menu = btn('td-sidebar__menu', '▸ Menu');
     foot.appendChild(menu);
     foot.appendChild(h('span', 'td-sidebar__hint', props.shortcutLabel || 'Ctrl + Alt + Z'));
     el.appendChild(foot);
@@ -135,7 +135,7 @@
     function create() {
       if (props.onNew) return props.onNew();
       tabs.forEach(function (t) { t.active = false; });
-      tabs.push({ id: 'tab' + nextId, label: '終端機 ' + nextId, active: true });
+      tabs.push({ id: 'tab' + nextId, label: 'Terminal ' + nextId, active: true });
       nextId++;
       render();
     }
@@ -148,7 +148,7 @@
     function startRename(tab, labelEl) {
       var input = h('input', 'td-tab__input');
       input.value = tab.label;
-      input.setAttribute('aria-label', '分頁名稱');
+      input.setAttribute('aria-label', 'Tab name');
       labelEl.replaceWith(input);
       input.focus();
       input.select();
@@ -175,12 +175,12 @@
         row.setAttribute('role', 'tab');
         row.setAttribute('aria-selected', t.active ? 'true' : 'false');
         row.tabIndex = t.active ? 0 : -1;
-        row.title = '雙擊重新命名';
+        row.title = 'Double-click to rename';
         row.appendChild(h('span', 'td-tab__dot'));
         var label = h('span', 'td-tab__label', t.label);
         row.appendChild(label);
-        if (t.exited) row.appendChild(h('span', 'td-tab__meta', '已結束'));
-        var x = btn('td-tab__close', '×', '關閉 ' + t.label);
+        if (t.exited) row.appendChild(h('span', 'td-tab__meta', 'exited'));
+        var x = btn('td-tab__close', '×', 'Close ' + t.label);
         x.addEventListener('click', function (e) { e.stopPropagation(); close(t.id); });
         row.appendChild(x);
         row.addEventListener('click', function () { select(t.id); });
@@ -236,7 +236,7 @@
 
   function MiniDesktop(props) {
     props = props || {};
-    var el = btn('td-mini', null, (props.label || '我的桌面') + '，' + (props.hint || '點擊放大'));
+    var el = btn('td-mini', null, (props.label || 'My desktop') + ', ' + (props.hint || 'Click to enlarge'));
     var screen = h('div', 'td-mini__screen');
     if (props.preview) {
       // Stand-in for the live desktop picture; not tokens on purpose.
@@ -246,12 +246,12 @@
       screen.appendChild(w);
     }
     el.appendChild(screen);
-    var labelEl = h('span', 'td-mini__label', props.label || '我的桌面');
+    var labelEl = h('span', 'td-mini__label', props.label || 'My desktop');
     el.appendChild(labelEl);
-    el.appendChild(h('span', 'td-mini__hint', props.hint || '點擊放大'));
+    el.appendChild(h('span', 'td-mini__hint', props.hint || 'Click to enlarge'));
     el.setLabel = function (text) {
       labelEl.textContent = text;
-      el.setAttribute('aria-label', text + '，' + (props.hint || '點擊放大'));
+      el.setAttribute('aria-label', text + ', ' + (props.hint || 'Click to enlarge'));
     };
     // Drag: past a 5px threshold a press becomes a move, and the click that ends it is swallowed.
     // With onDrag the host moves something else (e.g. its own window); without it the element moves
@@ -318,7 +318,7 @@
     el.setUnavailable = function (msg) {
       screen.textContent = '';
       screen.classList.remove('td-mini__screen--preview');
-      screen.appendChild(h('span', 'td-mini__empty', msg || '無法顯示桌面畫面'));
+      screen.appendChild(h('span', 'td-mini__empty', msg || 'Can\'t show the desktop'));
     };
     return el;
   }
@@ -329,15 +329,15 @@
     props = props || {};
     var tabs = props.tabs || [];
     var el = h('nav', 'td-edge');
-    el.setAttribute('aria-label', '終端機分頁（收合）');
+    el.setAttribute('aria-label', 'Terminal tabs (collapsed)');
     var ticks = h('div', 'td-edge__ticks');
     ticks.setAttribute('aria-hidden', 'true');
     var panel = h('div', 'td-edge__panel');
-    var head = h('div', 'td-edge__head', '終端機');
+    var head = h('div', 'td-edge__head', 'Terminals');
     var list = h('div', 'td-edge__list');
     var hint = h('div', 'td-edge__hint');
     hint.appendChild(h('kbd', 'td-kbd', props.shortcutLabel || 'Ctrl + Alt + Z'));
-    hint.appendChild(document.createTextNode(' 回到終端機'));
+    hint.appendChild(document.createTextNode(' back to the terminal'));
     panel.appendChild(head);
     panel.appendChild(list);
     panel.appendChild(hint);
@@ -368,7 +368,7 @@
         var b = btn('td-edge__tab is-' + state);
         b.appendChild(h('span', 'td-tab__dot'));
         b.appendChild(h('span', 'td-tab__label', t.label));
-        if (t.exited) b.appendChild(h('span', 'td-tab__meta', '已結束'));
+        if (t.exited) b.appendChild(h('span', 'td-tab__meta', 'exited'));
         b.addEventListener('click', function () { if (props.onSelect) props.onSelect(t.id); });
         list.appendChild(b);
       });

@@ -11,15 +11,15 @@
                     ],
     "apps":  [
                  {
-                     "label":  "檔案總管",
+                     "label":  "File Explorer",
                      "command":  "explorer.exe"
                  },
                  {
-                     "label":  "記事本",
+                     "label":  "Notepad",
                      "command":  "notepad.exe"
                  },
                  {
-                     "label":  "工作管理員",
+                     "label":  "Task Manager",
                      "command":  "taskmgr.exe"
                  }
              ]

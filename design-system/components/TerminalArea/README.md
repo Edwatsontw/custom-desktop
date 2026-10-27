@@ -1,8 +1,8 @@
 # TerminalArea
 
-鋪滿桌布的終端機，每個分頁一個；這個元件是有相同外觀的示範版，實際桌面用 xterm.js 套用同一組 token。
+The terminal that fills the wallpaper, one per tab. This component is a demo with the same look; the real desktop uses xterm.js with the same tokens.
 
-## 用法
+## Usage
 
 ```js
 const term = TerminalDesktop.TerminalArea({
@@ -13,34 +13,36 @@ const term = TerminalDesktop.TerminalArea({
 stage.appendChild(term); // .td-stage
 ```
 
-- 放在 `.td-desk` 的第二欄 `.td-stage` 裡，鋪滿整個區域；右上角的 `.td-corner` 疊在上面。
-- 預覽裡的指令是示範用的小 shell（`help`、`date`、`echo`、`clear`）。
-- 每一行可帶 `tone`：`out`（預設，`ink`）、`cmd`、`muted`（`ink-muted`）、`ok`（`phosphor`）、`warn`、`error`。
+- Put it in `.td-stage`, the second column of `.td-desk`, filling the area; `.td-corner` sits on top in the top-right corner.
+- The preview's commands come from a tiny demo shell (`help`, `date`, `echo`, `clear`).
+- Each line can have a `tone`: `out` (default, `ink`), `cmd`, `muted` (`ink-muted`), `ok` (`phosphor`), `warn`, `error`.
 
-## 用 xterm.js 時的對應
+## Mapping to xterm.js
 
-| xterm 設定 | token |
+| xterm option | Token |
 | --- | --- |
 | background | `desk` |
-| foreground、white | `ink` |
-| cursor、green | `phosphor` |
-| blue、選取範圍 | `focus` |
+| foreground, white | `ink` |
+| cursor, green | `phosphor` |
+| blue, selection | `focus` |
 | yellow | `warn` |
 | red | `error` |
 | brightBlack | `ink-muted` |
 
-字體 `mono` 14px。失去焦點時 xterm 會自動把游標變成空心框，和本元件的非作用中狀態一致。
+Font `mono` 14px. When it loses focus, xterm draws the cursor as a hollow box, matching this component's inactive state.
 
-## 右鍵選單與快捷鍵
+## Right-click menu and shortcuts
 
-在終端機裡按右鍵：複製（`Ctrl + Shift + C`，沒有選取時變灰）、貼上（`Ctrl + Shift + V`）、全選；清除畫面；放大／縮小／重設字體（`Ctrl + =`、`Ctrl + -`、`Ctrl + 0`，9–28px，所有分頁一起）；重新命名分頁（`F2`）、新分頁、切換到桌面。`Ctrl + C` 保留給終端機中斷指令。
+Right-click inside the terminal: Copy (greyed out with no selection), Paste, Select all; Clear; Larger / Smaller / Reset text size (9–28px, all tabs together); Rename tab, New tab, Switch to desktop.
 
-## 狀態
+Shortcuts follow Windows Terminal's defaults: `Ctrl + C` copies when text is selected and otherwise interrupts, `Ctrl + V` pastes, `Ctrl + Shift + C / V` copy and paste, `Ctrl + Shift + A` selects all, `Ctrl + Shift + T / W` open and close tabs, `Ctrl + Tab` and `Ctrl + Alt + 1…9` switch tabs, `Ctrl + = / - / 0` and `Ctrl` + wheel change the text size, and `Ctrl + Shift + ↑ ↓ PgUp PgDn Home End` scroll. Every other key goes to the shell.
 
-- **作用中**：提示字元與實心游標 `phosphor`，游標閃爍（減少動態效果時不閃）。
-- **非作用中**：提示字元 `ink-muted`，游標空心框。
+## States
 
-## 規則
+- **Active:** `phosphor` prompt and solid cursor; the cursor blinks (not with reduce motion).
+- **Inactive:** `ink-muted` prompt, hollow cursor.
 
-- 左右內距 `space-6`、上下 `space-4`；不加圓角、不加邊框，底色固定 `desk`。
-- 從原有桌面按快捷鍵回來時，焦點自動回到剛才的分頁。
+## Rules
+
+- `space-6` padding left and right, `space-4` top and bottom; no rounded corners, no border, always a `desk` background.
+- Coming back from the desktop with the shortcut puts the focus back in the tab you left.

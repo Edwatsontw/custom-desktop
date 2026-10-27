@@ -1,8 +1,8 @@
 # TabSidebar
 
-桌布左側的終端機分頁欄：列出每個終端機、切換、開新分頁、改名、關閉，底部是選單。
+The terminal tab bar on the left of the wallpaper: lists each terminal, switches, opens new tabs, renames, closes, with a menu at the bottom.
 
-## 用法
+## Usage
 
 ```js
 const sidebar = TerminalDesktop.TabSidebar({
@@ -13,48 +13,48 @@ const sidebar = TerminalDesktop.TabSidebar({
   onRename: (id, label) => renameTab(id, label),
   onMenu: (rect) => openMenu(rect)
 });
-sidebar.update(nextTabs); // 狀態改變後由你呼叫
+sidebar.update(nextTabs); // call this after the state changes
 ```
 
-- 有傳回呼函式時，分頁狀態由你管理，改完呼叫 `update(tabs)`；沒傳時（預覽）元件自己管理。
-- 寬 200px，放在 `.td-desk` 的第一欄。
+- When you pass callbacks, you own the tab state and call `update(tabs)` after changing it; without them (previews) the component manages itself.
+- 200px wide, in the first column of `.td-desk`.
 
-## 分頁狀態
+## Tab states
 
-| 狀態 | 圓點 | 說明 |
+| State | Dot | Notes |
 | --- | --- | --- |
-| 作用中 | `phosphor` 實心 | 正在顯示的分頁，底色 `line` |
-| 有新輸出 | `focus` 實心 | 背景分頁有沒看過的輸出 |
-| 閒置 | `ink-muted` 空心 | 背景分頁，沒有新輸出 |
-| 已結束 | `ink-muted` 虛線 | 終端機程序已結束，名稱變淡並標「已結束」 |
+| Active | Solid `phosphor` | The tab being shown, with a `line` background |
+| New output | Solid `focus` | A background tab with output not seen yet |
+| Idle | Hollow `ink-muted` | A background tab with no new output |
+| Exited | Dashed `ink-muted` | The terminal process has ended; the name dims and is marked "exited" |
 
-綠色和藍色除了色相不同，也靠「作用中有底色」區分。
+Green and blue differ in hue, and the active tab also has a background.
 
-## 操作
+## Actions
 
-- 點分頁切換；方向鍵上下移動；`Enter` 選取。
-- 雙擊或 `F2` 改名，`Enter` 確定、`Esc` 取消。
-- 滑鼠中鍵或 `×` 關閉。
-- 「+ 新分頁」開一個新的終端機；「▸ 選單」開啟程式捷徑與設定。
-- 右鍵：呼叫 `onContextMenu(id, x, y)`，由你在該位置顯示分頁選單；選單裡的「重新命名」呼叫 `startRename(id)`。
+- Click a tab to switch; arrow keys move up and down; `Enter` selects.
+- Double-click or `F2` (with the tab list focused) to rename; `Enter` confirms, `Esc` cancels.
+- Middle-click or `×` to close.
+- "+ New tab" opens a new terminal; "▸ Menu" opens app shortcuts and settings.
+- Right-click calls `onContextMenu(id, x, y)` so you can show the tab menu there; the menu's "Rename" calls `startRename(id)`.
 
-## 右鍵選單內容
+## Right-click menu
 
-用系統原生選單，項目用動詞開頭、分組以分隔線隔開，不能用的項目變灰而不是隱藏：
+Use the system's native menu. Items start with a verb, groups are split by separators, and unavailable items are greyed out rather than hidden:
 
-1. 重新命名（F2）、重新啟動、清除畫面
-2. 複製所有輸出、儲存輸出成文字檔…、在檔案總管開啟資料夾（只有開機程式分頁）
-3. 上移、下移
-4. 關閉分頁、關閉其他一般分頁
+1. Rename, Restart, Clear
+2. Copy all output, Save output as text…, Open folder in File Explorer (startup tabs only)
+3. Move up, Move down
+4. Close tab, Close other plain tabs
 
-會停止正在執行的程式的動作（關閉、重新執行開機程式），先跳確認。
+Actions that stop a running program (closing it, running a startup program again) ask first.
 
-## 命名
+## Naming
 
-新分頁叫「終端機 N」，N 取目前沒被用到的最小數字：關掉中間的分頁會留下空號，下一個新分頁先補上；全部關掉後從 1 開始，數字不會一直變大。開機程式分頁用它在設定裡的名稱，不佔編號。
+New tabs are called "Terminal N", where N is the smallest number not in use: closing a tab in the middle leaves a gap that the next new tab fills, and closing everything starts over at 1, so the numbers never keep growing. Startup program tabs use their name from the settings and don't take a number.
 
-## 規則
+## Rules
 
-- 分頁名稱用 mono 12px；其他文字用 `ui`。
-- 底色 `surface`，右側 1px `line` 分隔。
-- 分頁列表太長時捲動，底部選單固定。
+- Tab names use mono 12px; other text uses `ui`.
+- `surface` background, with a 1px `line` divider on the right.
+- A long tab list scrolls; the menu at the bottom stays put.

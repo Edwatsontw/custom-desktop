@@ -1,4 +1,4 @@
-// 自製桌面 — main process.
+// Custom Desktop — main process.
 // Terminal mode: one full-screen window (tabs + terminal + live mini desktop, top right).
 // Desktop mode: that window hides, and a thin always-on-top strip on the left edge lists the tabs.
 
@@ -29,7 +29,7 @@ function loadConfig() {
     // Notepad may save with a byte-order mark; JSON.parse rejects it.
     return { ...CONFIG_DEFAULTS, ...JSON.parse(raw.replace(/^﻿/, '')) };
   } catch (err) {
-    console.error('config.json 讀取失敗，使用預設值：', err.message);
+    console.error('Could not read config.json, using defaults:', err.message);
     return { ...CONFIG_DEFAULTS };
   }
 }
@@ -134,7 +134,7 @@ function createMainWindow() {
     fullscreenable: false,
     skipTaskbar: true,
     show: false,
-    title: '自製桌面',
+    title: 'Custom Desktop',
     // Keep the desktop video running while hidden, so swapping back starts from a current picture.
     webPreferences: { ...webPreferences, backgroundThrottling: false }
   });
@@ -165,7 +165,7 @@ function createStripWindow() {
     skipTaskbar: true,
     alwaysOnTop: true,
     show: false,
-    title: '自製桌面分頁',
+    title: 'Custom Desktop tabs',
     webPreferences
   });
   stripWin.setAlwaysOnTop(true, 'screen-saver');
@@ -192,7 +192,7 @@ function createPipWindow() {
     thickFrame: false,
     focusable: false,
     show: false,
-    title: '自製桌面終端機',
+    title: 'Custom Desktop terminal',
     webPreferences
   });
   pipWin.setAlwaysOnTop(true, 'screen-saver');
@@ -309,21 +309,21 @@ function showMenu(x, y) {
   const login = app.getLoginItemSettings(loginArgs());
   const appItems = (config.apps || []).map((a) => ({ label: a.label, click: () => launch(a.command) }));
   const menu = Menu.buildFromTemplate([
-    { label: '新分頁', accelerator: 'Ctrl+Shift+T', click: () => mainWin.webContents.send('tab:new') },
-    { label: '重新啟動這個分頁', click: () => mainWin.webContents.send('tab:restart') },
+    { label: 'New tab', accelerator: 'Ctrl+Shift+T', click: () => mainWin.webContents.send('tab:new') },
+    { label: 'Restart this tab', click: () => mainWin.webContents.send('tab:restart') },
     { type: 'separator' },
     ...appItems,
     ...(appItems.length ? [{ type: 'separator' }] : []),
     {
-      label: '開機時自動啟動',
+      label: 'Start when Windows starts',
       type: 'checkbox',
       checked: login.openAtLogin,
       click: (item) => app.setLoginItemSettings({ openAtLogin: item.checked, ...loginArgs() })
     },
-    { label: '重新載入畫面', click: () => mainWin.reload() },
-    { label: '開發者工具', click: () => mainWin.webContents.openDevTools({ mode: 'detach' }) },
+    { label: 'Reload', click: () => mainWin.reload() },
+    { label: 'Developer tools', click: () => mainWin.webContents.openDevTools({ mode: 'detach' }) },
     { type: 'separator' },
-    { label: '結束自製桌面', click: () => app.quit() }
+    { label: 'Quit Custom Desktop', click: () => app.quit() }
   ]);
   menu.popup({ window: mainWin, x: Math.round(x), y: Math.round(y) });
 }
@@ -380,9 +380,9 @@ ipcMain.on('clipboard:write', (_e, text) => clipboard.writeText(String(text || '
 
 ipcMain.handle('file:save-text', async (_e, suggestedName, text) => {
   const res = await dialog.showSaveDialog(mainWin, {
-    title: '儲存終端機輸出',
+    title: 'Save terminal output',
     defaultPath: path.join(app.getPath('desktop'), suggestedName),
-    filters: [{ name: '文字檔', extensions: ['txt'] }]
+    filters: [{ name: 'Text file', extensions: ['txt'] }]
   });
   if (res.canceled || !res.filePath) return null;
   fs.writeFileSync(res.filePath, '﻿' + text, 'utf8');
@@ -445,7 +445,7 @@ app.whenReady().then(() => {
       const source = await primaryScreenSource();
       callback(source ? { video: source } : {});
     } catch (err) {
-      console.error('螢幕擷取失敗：', err.message);
+      console.error('Screen capture failed:', err.message);
       callback({});
     }
   });
@@ -458,12 +458,12 @@ app.whenReady().then(() => {
   screen.on('display-removed', fitToScreen);
 
   if (!globalShortcut.register(config.returnShortcut, () => returnToTerminal(null, { instant: true }))) {
-    console.error('無法註冊快捷鍵 ' + config.returnShortcut + '，可能已被其他程式占用。');
+    console.error('Could not register the shortcut ' + config.returnShortcut + '; another program may be using it.');
   }});
 
 /* ---------- Opening batch files in a tab ---------- */
 
-// Launching the app with a .bat/.cmd path (e.g. 開啟於自製桌面.vbs, or a file association) opens it
+// Launching the app with a .bat/.cmd path (e.g. Open in Custom Desktop.vbs, or a file association) opens it
 // as a new tab and brings the terminal forward. If the app is already running, Windows starts a
 // second copy, which hands its arguments to this one through 'second-instance' and exits.
 let pageReady = false;

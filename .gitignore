@@ -2,7 +2,7 @@
 node_modules/
 
 # Backed-up Windows startup shortcuts (local to this computer)
-停用的開機捷徑/
+Disabled startup shortcuts/
 
 # Logs and OS clutter
 *.log

@@ -12,8 +12,8 @@
   };
 
   const mini = window.TerminalDesktop.MiniDesktop({
-    label: '終端機',
-    hint: '點擊返回',
+    label: 'Terminal',
+    hint: 'Click to return',
     onOpen: () => desk.pipSelect(),
     // Dragging moves this whole window.
     draggable: true,

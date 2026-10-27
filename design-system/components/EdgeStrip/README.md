@@ -1,8 +1,8 @@
 # EdgeStrip
 
-原有桌面全螢幕時，貼在螢幕左邊緣的 8px 細條；滑鼠移上去展開成分頁列表，點分頁直接回到那個終端機。
+While the real desktop is full screen, an 8px strip sits on the screen's left edge. Move the mouse onto it and it opens into the tab list; click a tab to go straight back to that terminal.
 
-## 用法
+## Usage
 
 ```js
 const strip = TerminalDesktop.EdgeStrip({
@@ -13,17 +13,17 @@ const strip = TerminalDesktop.EdgeStrip({
 strip.update(nextTabs);
 ```
 
-- 只在原有桌面全螢幕時出現，永遠在其他視窗之上。
-- 收合時寬 8px：底色 `surface`，每個分頁一條 2 × 16px 的刻度，顏色和分頁圓點相同（作用中 `phosphor`、有新輸出 `focus`、其他 `ink-muted`）。背景分頁有新輸出時，不展開也看得到藍色刻度。
-- 展開時寬 220px：分頁列表 + 底部提示「`Ctrl + Alt + Z` 回到終端機」。
+- Shown only while the real desktop is full screen, always above other windows.
+- Collapsed it is 8px wide: `surface` background, with one 2 × 16px mark per tab in the same color as the tab dot (active `phosphor`, new output `focus`, otherwise `ink-muted`). A background tab's new output shows as a blue mark even when collapsed.
+- Open it is 220px wide: the tab list plus a hint at the bottom, "`Ctrl + Alt + Z` back to the terminal".
 
-## 互動
+## Interaction
 
-- 滑鼠移入或鍵盤焦點進入 → 展開；移出 250ms 後收合。
-- 點分頁 → 回到終端機並切到那個分頁。
-- 以獨立視窗實作時，用 `onExpand` 同步調整視窗寬度，收合時只占 8px，不擋住桌面。
+- Mouse or keyboard focus enters → it opens; 250ms after the mouse leaves → it collapses.
+- Click a tab → back to the terminal, on that tab.
+- When built as its own window, use `onExpand` to resize the window, so it takes only 8px when collapsed and doesn't block the desktop.
 
-## 規則
+## Rules
 
-- 不放圖示、不加陰影；展開面板右側 1px `line`。
-- 不要自動展開；只有使用者把滑鼠移過去才展開。
+- No icons, no shadow; the open panel has a 1px `line` on its right.
+- Never open by itself; only when the user moves the mouse onto it.

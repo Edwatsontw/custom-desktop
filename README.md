@@ -1,93 +1,106 @@
-# 自製桌面
+# Custom Desktop
 
-終端機鋪滿整個桌布，左側是分頁；你原本的桌面縮成右上角的即時小畫面，點一下就放大回全螢幕。依照 `design-system/` 裡的 Terminal Desktop 設計系統製作。
+A terminal that fills your whole wallpaper, with its tabs down the left side. Your real desktop shrinks to a live mini view in the top-right corner; click it to bring the desktop back full screen. Built with the Terminal Desktop design system in `design-system/`.
 
-## 啟動
+## Install and start
 
-雙擊 **啟動自製桌面.vbs**。
+```
+npm install
+```
 
-或在這個資料夾開終端機執行：
+Then double-click **Start Custom Desktop.vbs**, or run this in the folder:
 
 ```
 npm start
 ```
 
-## 操作
+## Using it
 
-| 動作 | 結果 |
+| Action | Result |
 | --- | --- |
-| 左側「+ 新分頁」或 `Ctrl + Shift + T` | 開新的終端機分頁 |
-| 點分頁 / `Ctrl + Tab` | 切換分頁 |
-| 雙擊分頁名稱 | 改名 |
-| 分頁上的 `×`、滑鼠中鍵、`Ctrl + Shift + W` | 關閉分頁 |
-| 點右上角「我的桌面」小畫面 | 桌面放大成全螢幕，終端機縮到右上角（交換動畫） |
-| 點右上角的終端機小畫面 | 換回終端機 |
-| 按住小畫面拖曳 | 移到任何位置；切換時小畫面待在原地（桌面和終端機小畫面共用同一個位置） |
-| 滑鼠移到螢幕最左邊的細條 | 展開分頁列表，點分頁直接回到那個終端機 |
-| `Ctrl + Alt + Z` | 從任何地方立刻把終端機叫到最前面（不播動畫，在其他視窗之上） |
-| 左下「▸ 選單」 | 程式捷徑、開機自動啟動、重新啟動分頁、結束程式 |
+| "+ New tab" on the left, or `Ctrl + Shift + T` | Open a new terminal tab |
+| Click a tab, or `Ctrl + Tab` | Switch tabs |
+| Double-click a tab name | Rename it |
+| `×` on a tab, middle-click, or `Ctrl + Shift + W` | Close the tab |
+| Click the "My desktop" mini view (top right) | The desktop grows to full screen and the terminal shrinks into the corner (swap animation) |
+| Click the mini terminal in the corner | Swap back to the terminal |
+| Drag the mini view | Move it anywhere. It stays in place when you swap (the desktop and terminal mini views share one spot) |
+| Move the mouse to the thin strip on the far left | Open the tab list; click a tab to go straight back to it |
+| `Ctrl + Alt + Z` | From anywhere, bring the terminal to the front at once (no animation, above other windows) |
+| "▸ Menu" at the bottom left | App shortcuts, start with Windows, restart a tab, quit |
 
-- 新分頁會用目前沒被用到的最小編號：關掉 `終端機 2` 再開新的，會補上 2；全部關掉後再開，從 `終端機 1` 開始。
-- 背景分頁有新輸出時，圓點變藍色；在桌面模式時，左邊細條上也看得到藍色刻度。
+- A new tab takes the smallest number not in use: close `Terminal 2` and the next new tab is `Terminal 2` again; close them all and it starts over at `Terminal 1`.
+- A background tab with new output gets a blue dot. In desktop mode you can also see a blue mark on the left strip.
 
-## 右鍵選單
+## Right-click menus
 
-**在左側分頁上按右鍵：** 重新命名、重新啟動（開機程式分頁是「重新執行程式」）、清除畫面、複製所有輸出、儲存輸出成文字檔（預設存到桌面）、在檔案總管開啟資料夾（開機程式分頁）、上移／下移、關閉分頁、關閉其他一般分頁（不會關到開機程式）。
+**Right-click a tab on the left:** rename, restart (startup tabs: run again), clear, copy all output, save output as a text file (to the desktop by default), open folder in File Explorer (startup tabs), move up / down, close tab, close other plain tabs (startup tabs are never closed this way).
 
-**在終端機裡按右鍵：** 複製、貼上、全選、清除畫面、放大／縮小／重設字體、重新命名分頁、新分頁、切換到桌面。
+**Right-click inside the terminal:** copy, paste, select all, clear, larger / smaller / reset text size, rename tab, new tab, switch to desktop.
 
-## 快捷鍵（在終端機裡）
+## Shortcuts inside the terminal
 
-| 快捷鍵 | 動作 |
+The same defaults as Windows Terminal:
+
+| Shortcut | Action |
 | --- | --- |
-| `Ctrl + Shift + C` / `Ctrl + Shift + V` | 複製選取的文字／貼上 |
-| `Ctrl + =` / `Ctrl + -` / `Ctrl + 0` | 放大／縮小／重設字體（所有分頁一起，會記住） |
-| `F2` | 重新命名目前的分頁 |
-| `Ctrl + Shift + T` / `Ctrl + Shift + W` | 新分頁／關閉分頁 |
-| `Ctrl + Tab` / `Ctrl + Shift + Tab` | 下一個／上一個分頁 |
+| `Ctrl + C` | Copy when text is selected; otherwise it interrupts the running command, as usual |
+| `Ctrl + V` | Paste |
+| `Ctrl + Shift + C` / `Ctrl + Shift + V` | Copy / paste |
+| `Ctrl + Insert` / `Shift + Insert` | Copy / paste |
+| `Ctrl + Shift + A` | Select all |
+| `Ctrl + Shift + T` / `Ctrl + Shift + D` | New tab |
+| `Ctrl + Shift + W` | Close tab |
+| `Ctrl + Tab` / `Ctrl + Shift + Tab` | Next / previous tab |
+| `Ctrl + Alt + 1` … `9` | Go to tab 1 … 9 |
+| `Ctrl + =` / `Ctrl + -` / `Ctrl + 0`, or `Ctrl` + mouse wheel | Larger / smaller / reset text size (all tabs, remembered) |
+| `Ctrl + Shift + ↑` / `↓` | Scroll one line |
+| `Ctrl + Shift + PgUp` / `PgDn` | Scroll one page |
+| `Ctrl + Shift + Home` / `End` | Scroll to the top / bottom |
 
-`Ctrl + C` 照舊是中斷正在執行的指令。
-- 分頁裡的 PowerShell 結束後，按 `Enter` 重新啟動。
-- 重開程式時會記住分頁名稱，但每個分頁會開新的 PowerShell。
+Every other key goes straight to the shell.
 
-## 開機程式
+- When PowerShell in a tab exits, press `Enter` to start it again.
+- Tab names are remembered when you reopen the app, but each tab starts a new PowerShell.
 
-`config.json` 的 `startupTabs` 裡列的程式，每次打開自製桌面時都會各開一個分頁執行，排在最前面、在背景跑。
+## Startup programs
 
-`config.json` 是你自己電腦的設定，不會上傳到 Git；第一次使用時把 `config.example.json` 複製成 `config.json` 再改。
+Programs listed in `startupTabs` in `config.json` each get their own tab every time Custom Desktop opens. They're listed first and run in the background.
 
-- 關閉正在執行的開機分頁前會先確認，因為這會直接停止裡面的程式。
-- 程式結束後在分頁按 `Enter` 會重新執行同一個檔案。
-- 如果某個程式原本放在 Windows「啟動」資料夾，改用 `startupTabs` 後記得把那個捷徑移走，避免開機時跑兩份。
+`config.json` holds your own computer's settings and is not uploaded to Git. The first time, copy `config.example.json` to `config.json` and edit it.
 
-## 設定
+- Closing a startup tab that is still running asks first, because it stops the program in it.
+- When the program ends, press `Enter` in the tab to run the same file again.
+- If a program used to start from the Windows Startup folder, move that shortcut out after adding it to `startupTabs`, or it runs twice.
 
-編輯 `config.json`，存檔後從「▸ 選單 → 結束自製桌面」關掉再重開：
+## Settings
 
-- `shell` / `shellArgs`：要用的終端機，例如改成 `"pwsh.exe"` 使用 PowerShell 7。
-- `returnShortcut`：返回快捷鍵（Electron 格式，例如 `"Control+Alt+Z"`；要用 Win 鍵寫 `Super`，例如 `"Control+Super+Z"`），`returnShortcutLabel` 是畫面上顯示的文字。
-- `miniDesktopFps`：右上角桌面小畫面每秒更新幾次（預設 10；在桌面模式時自動降到 2）。調低可以省資源。
-- `startupTabs`：開機程式分頁，每個是 `{ "label": "名稱", "command": "完整路徑.bat" }`，會在檔案所在的資料夾執行；可加 `"cwd"` 指定別的資料夾。
-- `apps`：選單裡的程式捷徑，`command` 可以是程式名稱或完整路徑。
+Edit `config.json`, save, then quit from "▸ Menu → Quit Custom Desktop" and start it again:
 
-## 用自製桌面開啟 .bat / .cmd
+- `shell` / `shellArgs`: the shell to use, for example `"pwsh.exe"` for PowerShell 7.
+- `returnShortcut`: the shortcut that brings the terminal back (Electron format, for example `"Control+Alt+Z"`; write the Windows key as `Super`, for example `"Control+Super+Z"`). `returnShortcutLabel` is the text shown on screen.
+- `miniDesktopFps`: how many times a second the desktop mini view updates (default 10; drops to 2 in desktop mode). Lower it to save resources.
+- `startupTabs`: startup program tabs, each `{ "label": "Name", "command": "full\\path\\to\\file.bat" }`. It runs in the file's folder; add `"cwd"` to use another folder.
+- `apps`: app shortcuts in the menu. `command` can be a program name or a full path.
 
-雙擊 `.bat` 或 `.cmd` 時，會在自製桌面的終端機開一個新分頁執行（在檔案所在的資料夾），如果正在看桌面，畫面會自動切回終端機。分頁名稱就是檔名；程式結束後在分頁按 `Enter` 會重新執行，關閉正在執行的分頁前會先確認。
+## Opening .bat / .cmd files in Custom Desktop
 
-- **開啟：** 執行 `設定 bat 用自製桌面開啟.cmd`。只改你這個 Windows 帳號的設定，不需要系統管理員。
-- **還原：** 執行 `還原 bat 開啟方式.cmd`，雙擊就回到 Windows 原本的黑色視窗。
-- **臨時用原本的方式：** 在檔案上按右鍵 →「用原本的視窗執行」（Windows 11 要先點「顯示其他選項」）。
-- **不改設定也能用：** 把 `.bat` 拖到 `開啟於自製桌面.vbs` 上。
-- 雙擊時傳給 bat 的額外參數不會帶進去；需要參數的話用右鍵「用原本的視窗執行」。
-- 搬移自製桌面資料夾後，請先執行還原、搬完再重新設定，否則雙擊 bat 會找不到程式。
+Double-clicking a `.bat` or `.cmd` runs it in a new Custom Desktop terminal tab (in the file's folder). If you're looking at the desktop, the terminal comes back. The tab is named after the file. When the program ends, press `Enter` in the tab to run it again; closing it while it runs asks first.
 
-## 解析度
+- **Turn on:** run `Open bat files in Custom Desktop.cmd`. It only changes settings for your Windows account and doesn't need admin rights.
+- **Turn off:** run `Restore default bat opening.cmd`. Double-clicking goes back to the normal black Windows window.
+- **Use the old way once:** right-click the file → "Run in a classic window" (on Windows 11, click "Show more options" first).
+- **Without changing any settings:** drag a `.bat` onto `Open in Custom Desktop.vbs`.
+- Extra arguments passed to the bat on double-click are not carried over; if it needs arguments, use "Run in a classic window".
+- If you move the Custom Desktop folder, run the restore script first, then set it up again after the move, or double-clicking a bat won't find the app.
 
-改變解析度、Windows 縮放比例、工作列位置，或接上／拔掉螢幕時，自製桌面會自動重新貼齊主螢幕，在終端機模式或桌面模式都一樣。右上角小視窗的大小跟著螢幕寬度走（最小 192px、最大 384px），而且一定留在畫面內。
+## Screen resolution
 
-## 已知限制
+When the resolution, Windows scaling, taskbar position, or connected monitors change, Custom Desktop refits the main screen right away, in terminal mode or desktop mode. The mini view's size follows the screen width (192px to 384px) and always stays on screen.
 
-- 這是一個鋪滿螢幕的視窗，不是真的嵌進桌布。終端機模式時開啟的其他程式會浮在它上面；按 `Ctrl + Alt + Z` 會把它叫回最前面。
-- 小畫面只擷取主螢幕。
-- 左邊細條與右上角終端機小畫面永遠在最上層，會蓋住其他視窗的那一小塊。
-- 終端機小畫面是整個終端機區等比例縮小，字很小，主要用來看有沒有在跑、有沒有新輸出。
+## Known limits
+
+- This is a full-screen window, not something built into the wallpaper. Other programs you open in terminal mode float above it; press `Ctrl + Alt + Z` to bring it back to the front.
+- The mini view only captures the main screen.
+- The left strip and the corner mini terminal are always on top, so they cover that small part of other windows.
+- The mini terminal is the whole terminal area scaled down, so the text is tiny. It's mainly for seeing whether something is running or has new output.

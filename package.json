@@ -1,7 +1,7 @@
 {
   "name": "custom-desktop",
   "version": "0.1.0",
-  "description": "自製桌面：終端機與原有桌面分區顯示（Terminal Desktop 設計系統）",
+  "description": "Custom Desktop: a terminal as your wallpaper, with a live mini view of the real desktop (Terminal Desktop design system)",
   "main": "main.js",
   "private": true,
   "scripts": {

@@ -1,50 +1,50 @@
 # MiniDesktop
 
-右上角的即時小畫面（子母畫面）：終端機模式時顯示原有桌面，桌面模式時顯示終端機；點一下兩個畫面交換。
+The live mini view in the top-right corner (picture in picture): it shows the real desktop in terminal mode and the terminal in desktop mode. Click it and the two views swap.
 
-## 用法
+## Usage
 
 ```js
-// 終端機模式：桌面小畫面
+// Terminal mode: the desktop mini view
 const mini = TerminalDesktop.MiniDesktop({ onOpen: () => swapToDesktop() });
-corner.appendChild(mini);            // .td-corner：終端機區右上角
-mini.setMedia(videoElement);         // 即時桌面畫面
-mini.setUnavailable('無法擷取畫面');   // 擷取失敗時
+corner.appendChild(mini);            // .td-corner: top right of the terminal area
+mini.setMedia(videoElement);         // live picture of the desktop
+mini.setUnavailable("Can't capture the screen"); // when capture fails
 
-// 桌面模式：終端機小畫面
-const back = TerminalDesktop.MiniDesktop({ label: 'dev', hint: '點擊返回', onOpen: () => swapToTerminal() });
-back.setMedia(scaledTerminal);       // 縮小的終端機畫面
-back.setLabel('build');              // 換分頁時更新名稱
+// Desktop mode: the mini terminal
+const back = TerminalDesktop.MiniDesktop({ label: 'dev', hint: 'Click to return', onOpen: () => swapToTerminal() });
+back.setMedia(scaledTerminal);       // scaled-down picture of the terminal
+back.setLabel('build');              // update the name when the tab changes
 ```
 
-- 放在 `.td-stage` 裡的 `.td-corner`，離右邊 `space-6`、上方 `space-4`。
-- 桌面小畫面 256 × 144（16:9）；終端機小畫面寬 256，高度依終端機區比例。圓角 `radius-md`，邊框 `line`。
-- 即時畫面由你提供；`preview: true` 只畫示意。擷取桌面時要把終端機視窗排除，否則小畫面會照到自己。
+- Put it in `.td-corner` inside `.td-stage`, `space-6` from the right and `space-4` from the top.
+- The desktop mini view is 256 × 144 (16:9); the mini terminal is 256 wide with the terminal area's proportions. `radius-md` corners, `line` border.
+- You supply the live picture; `preview: true` only draws a sketch. Leave the terminal window out of the desktop capture, or the mini view shows itself.
 
-## 交換動畫
+## Swap animation
 
-點小畫面時，兩個畫面同時移動：
+When the mini view is clicked, both views move at once:
 
-1. 小畫面的內容（桌面）從右上角放大到全螢幕。
-2. 原本全螢幕的內容（終端機）縮小、等比例飛進右上角，圓角變成 `radius-md`。
-3. 側邊欄與右上角小工具淡出。
-4. 動畫結束時，角落出現 `line` 邊框與分頁名稱，畫面變成另一種模式的小畫面。
+1. The mini view's content (the desktop) grows from the top-right corner to full screen.
+2. The full-screen content (the terminal) shrinks in proportion and flies into the corner, its corners becoming `radius-md`.
+3. The sidebar and corner widgets fade out.
+4. When the animation ends, the corner shows a `line` border and the tab name: it is now the other mode's mini view.
 
-時間 320ms，`cubic-bezier(0.2, 0, 0, 1)`；換回來時播放相反的動畫。開啟「減少動態效果」時直接切換。
+320ms, `cubic-bezier(0.2, 0, 0, 1)`; swapping back plays it in reverse. With "reduce motion" on, the swap is instant.
 
-## 互動
+## Interaction
 
-- 滑鼠移上：邊框變亮，右下出現提示（`phosphor`）：「點擊放大」或「點擊返回」。
-- 點擊或鍵盤 `Enter`：交換。
-- **拖曳**（`draggable: true`）：按住移動超過 5px 就變成拖曳，放開時不會觸發點擊。拖曳中邊框變 `focus` 色、隱藏提示。
-  - 沒傳 `onDrag`：元件自己在父層裡移動，不會拖出邊界。
-  - 有傳 `onDrag(dx, dy)`：由你移動別的東西，例如整個小視窗。
-  - **兩個小畫面共用同一個位置**：它們是同一個「小視窗」，只是內容不同。交換時小視窗待在原地——桌面從小視窗的位置放大，終端機縮進同一個位置、同樣寬度；拖曳任何一個，另一個下次也出現在那裡。位置以「離右上角的距離」記住，螢幕大小改變時跟著右上角走。小視窗可以放在畫面上任何地方，包括側邊欄上方。
-- 鍵盤焦點：`focus` 色邊框。
+- Hover: the border brightens and a hint appears at the bottom right (`phosphor`): "Click to enlarge" or "Click to return".
+- Click or `Enter`: swap.
+- **Drag** (`draggable: true`): moving more than 5px while pressed starts a drag, and letting go doesn't count as a click. While dragging the border turns `focus` and the hint hides.
+  - Without `onDrag`: the component moves itself inside its parent and can't leave it.
+  - With `onDrag(dx, dy)`: you move something else, such as a whole small window.
+  - **The two mini views share one spot**: they are the same "small window" with different content. Swapping leaves the small window where it is: the desktop grows out of its spot, and the terminal shrinks into the same spot at the same width. Drag either one and the other appears there next time. The spot is remembered as the distance from the top-right corner, so it follows that corner when the screen size changes. The small window can sit anywhere on screen, over the sidebar too.
+- Keyboard focus: a `focus` border.
 
-## 規則
+## Rules
 
-- 左下角固定標名稱：桌面小畫面是「我的桌面」，終端機小畫面是分頁名稱。背景 `surface-glass`。
-- 小畫面本身不加陰影。
-- **跟著螢幕大小走：** 寬度約為畫面寬的 13.4%（1920px 寬的螢幕上約 256px），最小 192px、最大 384px，固定 16:9。終端機小畫面同寬，高度依終端機區比例。
-- **任何時候都留在畫面內：** 解析度、縮放比例、工作列位置改變，或接上／拔掉螢幕時，小視窗以「離右上角的距離」重新定位並夾在畫面內；在桌面模式中改變也一樣，終端機小畫面會跟著換大小與位置，換回來的動畫從新的位置開始。
+- A name is always shown at the bottom left: "My desktop" for the desktop mini view, the tab name for the mini terminal. `surface-glass` background.
+- The mini view itself has no shadow.
+- **Sized by the screen:** about 13.4% of the screen width (about 256px on a 1920px-wide screen), at least 192px and at most 384px, always 16:9. The mini terminal is the same width, with the terminal area's proportions.
+- **Always on screen:** when the resolution, scaling or taskbar position changes, or a monitor is added or removed, the small window is placed again by its distance from the top-right corner and kept on screen. This also happens in desktop mode: the mini terminal changes size and spot with it, and the swap back starts from the new spot.

@@ -68,14 +68,14 @@
     desk.ptyCreate(t.id, t.term.cols, t.term.rows, t.startupIndex);
   }
 
-  // New tabs take the smallest free number: closing everything starts over at 終端機 1,
+  // New tabs take the smallest free number: closing everything starts over at Terminal 1,
   // and a gap left by a closed tab is filled first.
   function nextLabel() {
     const used = new Set();
-    tabs.forEach((t) => { const m = /^終端機 (\d+)$/.exec(t.label); if (m) used.add(Number(m[1])); });
+    tabs.forEach((t) => { const m = /^Terminal (\d+)$/.exec(t.label); if (m) used.add(Number(m[1])); });
     let n = 1;
     while (used.has(n)) n += 1;
-    return '終端機 ' + n;
+    return 'Terminal ' + n;
   }
 
   let fontSize = Number(localStorage.getItem('fontSize')) || 14;
@@ -123,6 +123,13 @@
       desk.ptyWrite(id, d);
     });
     term.attachCustomKeyEventHandler(keyHandler);
+    // Ctrl + mouse wheel changes the font size, as in Windows Terminal.
+    host.addEventListener('wheel', (e) => {
+      if (!e.ctrlKey) return;
+      e.preventDefault();
+      e.stopPropagation();
+      setFontSize(fontSize + (e.deltaY < 0 ? 1 : -1));
+    }, { passive: false, capture: true });
     host.addEventListener('contextmenu', (e) => {
       e.preventDefault();
       terminalMenu(t, e.clientX, e.clientY);
@@ -157,7 +164,7 @@
     if (i < 0) return;
     const t = tabs[i];
     if (t.startupIndex != null && !t.exited &&
-        !window.confirm('關閉「' + t.label + '」會停止裡面正在執行的程式。確定要關閉嗎？')) return;
+        !window.confirm('Closing "' + t.label + '" stops the program running in it. Close it?')) return;
     desk.ptyKill(id);
     t.term.dispose();
     t.host.remove();
@@ -175,7 +182,7 @@
   function restartTab(t) {
     if (!t) return;
     if (t.startupIndex != null && !t.exited &&
-        !window.confirm('重新執行「' + t.label + '」會先停止正在執行的程式。確定嗎？')) return;
+        !window.confirm('Running "' + t.label + '" again stops the program running now. Continue?')) return;
     desk.ptyKill(t.id);
     t.term.reset();
     startShell(t);
@@ -244,19 +251,19 @@
     const isStartup = t.startupIndex != null;
     const others = tabs.some((o) => o !== t && o.startupIndex == null);
     const pick = await desk.popupMenu([
-      { id: 'rename', label: '重新命名', accelerator: 'F2' },
-      { id: 'restart', label: isStartup ? '重新執行程式' : '重新啟動終端機' },
-      { id: 'clear', label: '清除畫面' },
+      { id: 'rename', label: 'Rename' },
+      { id: 'restart', label: isStartup ? 'Run again' : 'Restart terminal' },
+      { id: 'clear', label: 'Clear' },
       SEP,
-      { id: 'copyAll', label: '複製所有輸出' },
-      { id: 'save', label: '儲存輸出成文字檔…' },
-      ...(isStartup ? [{ id: 'folder', label: '在檔案總管開啟資料夾' }] : []),
+      { id: 'copyAll', label: 'Copy all output' },
+      { id: 'save', label: 'Save output as text…' },
+      ...(isStartup ? [{ id: 'folder', label: 'Open folder in File Explorer' }] : []),
       SEP,
-      { id: 'up', label: '上移', enabled: i > 0 },
-      { id: 'down', label: '下移', enabled: i < tabs.length - 1 },
+      { id: 'up', label: 'Move up', enabled: i > 0 },
+      { id: 'down', label: 'Move down', enabled: i < tabs.length - 1 },
       SEP,
-      { id: 'close', label: '關閉分頁', accelerator: 'Ctrl+Shift+W' },
-      { id: 'closeOthers', label: '關閉其他一般分頁', enabled: others }
+      { id: 'close', label: 'Close tab', accelerator: 'Ctrl+Shift+W' },
+      { id: 'closeOthers', label: 'Close other plain tabs', enabled: others }
     ], x, y);
     runAction(pick, t);
   }
@@ -264,18 +271,18 @@
   // Right-click inside the terminal.
   async function terminalMenu(t, x, y) {
     const pick = await desk.popupMenu([
-      { id: 'copy', label: '複製', accelerator: 'Ctrl+Shift+C', enabled: t.term.hasSelection() },
-      { id: 'paste', label: '貼上', accelerator: 'Ctrl+Shift+V', enabled: !t.exited },
-      { id: 'selectAll', label: '全選' },
+      { id: 'copy', label: 'Copy', accelerator: 'Ctrl+C', enabled: t.term.hasSelection() },
+      { id: 'paste', label: 'Paste', accelerator: 'Ctrl+V', enabled: !t.exited },
+      { id: 'selectAll', label: 'Select all', accelerator: 'Ctrl+Shift+A' },
       SEP,
-      { id: 'clear', label: '清除畫面' },
-      { id: 'bigger', label: '放大字體', accelerator: 'Ctrl+=' },
-      { id: 'smaller', label: '縮小字體', accelerator: 'Ctrl+-' },
-      { id: 'resetFont', label: '重設字體大小（' + fontSize + 'px）', accelerator: 'Ctrl+0', enabled: fontSize !== 14 },
+      { id: 'clear', label: 'Clear' },
+      { id: 'bigger', label: 'Larger text', accelerator: 'Ctrl+=' },
+      { id: 'smaller', label: 'Smaller text', accelerator: 'Ctrl+-' },
+      { id: 'resetFont', label: 'Reset text size (' + fontSize + 'px)', accelerator: 'Ctrl+0', enabled: fontSize !== 14 },
       SEP,
-      { id: 'rename', label: '重新命名分頁', accelerator: 'F2' },
-      { id: 'new', label: '新分頁', accelerator: 'Ctrl+Shift+T' },
-      { id: 'desktop', label: '切換到桌面' }
+      { id: 'rename', label: 'Rename tab' },
+      { id: 'new', label: 'New tab', accelerator: 'Ctrl+Shift+T' },
+      { id: 'desktop', label: 'Switch to desktop' }
     ], x, y);
     runAction(pick, t);
   }
@@ -306,20 +313,46 @@
     if (t.active) t.term.focus();
   }
 
-  // Shortcuts inside the terminal. Ctrl + Alt + Z is global and never reaches here.
+  // Shortcuts inside the terminal: the same defaults as Windows Terminal. Every other key goes
+  // to the shell untouched. Ctrl + Alt + Z is global and never reaches here.
   function keyHandler(e) {
     if (e.type !== 'keydown') return true;
-    const k = e.key.toLowerCase();
     const a = active();
-    if (e.ctrlKey && e.shiftKey && k === 't') { createTab(); return false; }
-    if (e.ctrlKey && e.shiftKey && k === 'w') { if (a) closeTab(a.id); return false; }
-    if (e.ctrlKey && e.shiftKey && k === 'c') { if (a) copySelection(a); return false; }
-    if (e.ctrlKey && e.shiftKey && k === 'v') { if (a) paste(a); return false; }
-    if (e.ctrlKey && !e.shiftKey && (k === '=' || k === '+')) { setFontSize(fontSize + 1); return false; }
-    if (e.ctrlKey && !e.shiftKey && k === '-') { setFontSize(fontSize - 1); return false; }
-    if (e.ctrlKey && !e.shiftKey && k === '0') { setFontSize(14); return false; }
-    if (e.key === 'F2' && !e.ctrlKey && !e.altKey) { if (a) rename(a); return false; }
-    if (e.ctrlKey && k === 'tab') { cycle(e.shiftKey ? -1 : 1); return false; }
+    if (!a) return true;
+    const k = e.key.toLowerCase();
+    const ctrl = e.ctrlKey && !e.altKey && !e.metaKey && !e.shiftKey;
+    const ctrlShift = e.ctrlKey && e.shiftKey && !e.altKey && !e.metaKey;
+    const ctrlAlt = e.ctrlKey && e.altKey && !e.shiftKey && !e.metaKey;
+    const shiftOnly = e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey;
+    const done = () => { e.preventDefault(); return false; };
+    const term = a.term;
+
+    // Copy: Ctrl+C only while text is selected (otherwise it interrupts, as usual).
+    if ((ctrl && k === 'c' && term.hasSelection()) || (ctrlShift && k === 'c') || (ctrl && k === 'insert')) {
+      copySelection(a); term.clearSelection(); return done();
+    }
+    if ((ctrl && k === 'v') || (ctrlShift && k === 'v') || (shiftOnly && k === 'insert')) { paste(a); return done(); }
+    if (ctrlShift && k === 'a') { term.selectAll(); return done(); }
+
+    if (ctrlShift && (k === 't' || k === 'd')) { createTab(); return done(); }
+    if (ctrlShift && k === 'w') { closeTab(a.id); return done(); }
+    if (e.ctrlKey && !e.altKey && !e.metaKey && k === 'tab') { cycle(e.shiftKey ? -1 : 1); return done(); }
+    if (ctrlAlt && /^Digit[1-9]$/.test(e.code)) {
+      const t = tabs[Number(e.code.slice(5)) - 1];
+      if (t) showTab(t.id);
+      return done();
+    }
+
+    if (ctrl && (k === '=' || k === '+')) { setFontSize(fontSize + 1); return done(); }
+    if (ctrl && k === '-') { setFontSize(fontSize - 1); return done(); }
+    if (ctrl && k === '0') { setFontSize(14); return done(); }
+
+    if (ctrlShift && k === 'arrowup') { term.scrollLines(-1); return done(); }
+    if (ctrlShift && k === 'arrowdown') { term.scrollLines(1); return done(); }
+    if (ctrlShift && k === 'pageup') { term.scrollPages(-1); return done(); }
+    if (ctrlShift && k === 'pagedown') { term.scrollPages(1); return done(); }
+    if (ctrlShift && k === 'home') { term.scrollToTop(); return done(); }
+    if (ctrlShift && k === 'end') { term.scrollToBottom(); return done(); }
     return true;
   }
 
@@ -333,7 +366,7 @@
     const t = find(id);
     if (!t) return;
     t.exited = true;
-    t.term.write('\r\n\x1b[90m程序已結束，按 Enter 重新啟動\x1b[0m\r\n');
+    t.term.write('\r\n\x1b[90mProcess exited. Press Enter to restart.\x1b[0m\r\n');
     sync();
   });
   desk.onTabNew(() => createTab());
@@ -416,7 +449,7 @@
       mini.setMedia(img);
       const tick = async () => {
         const url = await desk.captureThumb().catch(() => null);
-        if (url) img.src = url; else mini.setUnavailable('無法擷取桌面畫面');
+        if (url) img.src = url; else mini.setUnavailable('Can\'t capture the desktop');
       };
       tick();
       pollTimer = setInterval(tick, 1000);
@@ -636,12 +669,14 @@
     saved = JSON.parse(localStorage.getItem('tabs') || '[]');
     savedActive = Number(localStorage.getItem('activeIndex')) || 0;
   } catch (e) { saved = []; }
-  if (!Array.isArray(saved) || !saved.length) saved = ['終端機 1'];
+  if (!Array.isArray(saved) || !saved.length) saved = ['Terminal 1'];
+  // Tab names saved by the earlier Chinese version.
+  saved = saved.map((l) => String(l).replace(/^\u7d42\u7aef\u6a5f (\d+)$/, 'Terminal $1'));
   const plain = saved.map((label, i) => createTab(String(label), i === 0));
   // Programs from config.json "startupTabs" open in their own tabs, listed first, in the background.
   const startupNames = readJSON('startupLabels') || {};
   const startupTabs = (config.startupTabs || []).map((s, i) => {
-    const t = createTab(startupNames[i] || s.label || ('開機程式 ' + (i + 1)), false, i);
+    const t = createTab(startupNames[i] || s.label || ('Startup program ' + (i + 1)), false, i);
     tabs.splice(tabs.indexOf(t), 1);
     return t;
   });
@@ -653,7 +688,7 @@
 
   /* ---------- Batch files opened from Windows ---------- */
 
-  // A .bat/.cmd opened with 自製桌面 runs in its own new tab (in the file's folder), shown at once.
+  // A .bat/.cmd opened with Custom Desktop runs in its own new tab (in the file's folder), shown at once.
   // Like a startup tab it asks before closing while running, and Enter reruns it once it ends.
   function openFileTab(file) {
     const name = String(file).split(/[\\/]/).pop();

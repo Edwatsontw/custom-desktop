@@ -1,82 +1,82 @@
 # Terminal Desktop
 
-終端機就是桌布：看得見，也打得進去。
+The terminal is the wallpaper: you can see it, and type into it.
 
-Terminal Desktop 是一套自訂桌面的設計系統。終端機鋪滿整個桌布，左側是終端機分頁；原本的桌面縮成右上角的即時小畫面，點一下就放大回全螢幕，按快捷鍵再縮回去。目前包含一個深色主題、10 個顏色、6 種文字樣式、4 個間距、3 個圓角，以及 5 個元件（見文末「元件」）。
+Terminal Desktop is a design system for a custom desktop. A terminal fills the whole wallpaper, with terminal tabs on the left. The real desktop shrinks to a live mini view in the top-right corner; click it to bring the desktop back full screen, and press a shortcut to shrink it again. It has one dark theme, 10 colors, 6 text styles, 4 spacing steps, 3 corner radii, and 5 components (see "Components" at the end).
 
-## 核心概念：兩種模式
+## Core idea: two modes
 
-### 終端機模式（平常）
+### Terminal mode (normal)
 
-| 區域 | 元件 | 說明 |
+| Area | Component | Notes |
 | --- | --- | --- |
-| 左側 200px | `TabSidebar` | 終端機分頁、新分頁、選單 |
-| 其餘全部 | `TerminalArea` | 目前分頁的終端機，鋪滿桌布 |
-| 右上角 | `MiniDesktop` | 原有桌面的即時小畫面（256 × 144） |
-| 小畫面下方 | `ClockWidget` | 時鐘 |
+| Left, 200px | `TabSidebar` | Terminal tabs, new tab, menu |
+| Everything else | `TerminalArea` | The current tab's terminal, filling the wallpaper |
+| Top right | `MiniDesktop` | Live mini view of the real desktop (256 × 144) |
+| Below the mini view | `ClockWidget` | Clock |
 
-### 桌面模式（點小畫面之後）
+### Desktop mode (after clicking the mini view)
 
-| 區域 | 元件 | 說明 |
+| Area | Component | Notes |
 | --- | --- | --- |
-| 全螢幕 | 系統原本的桌面 | 桌布、圖示、視窗都照常操作，不加任何遮罩 |
-| 右上角 | `MiniDesktop`（標示分頁名稱、提示「點擊返回」） | 剛才的終端機，即時更新的小畫面 |
-| 左邊緣 8px | `EdgeStrip` | 收合的分頁；滑鼠移上去展開 |
+| Full screen | The system's own desktop | Wallpaper, icons and windows work as usual, with nothing laid over them |
+| Top right | `MiniDesktop` (shows the tab name and the hint "Click to return") | The terminal you just left, as a live mini view |
+| Left edge, 8px | `EdgeStrip` | Collapsed tabs; opens when the mouse moves onto it |
 
-### 切換規則
+### Switching rules
 
-- **點右上角小畫面 → 兩個畫面交換。** 像影片播完縮到角落的畫面：桌面從右上角放大到全螢幕，同時終端機縮小飛進右上角，變成終端機小畫面。
-- **點右上角的終端機小畫面、或按 `Ctrl + Alt + Z` → 換回來。** 播放相反的動畫，回到剛才的分頁，鍵盤焦點直接在終端機裡。快捷鍵在任何程式裡都有效。
-- **點左邊緣細條的分頁 → 換回來，並切到那個分頁。**
-- **任何解析度、任何時候都自動適應。** 解析度、Windows 縮放比例、工作列位置或自動隱藏、接上或拔掉螢幕、換主螢幕——不論在哪種模式、甚至在交換之後——所有畫面都重新貼齊主螢幕的工作區：終端機重新排版、小視窗重新定位並留在畫面內、桌面畫面重新擷取。
-- **小視窗待在原地。** 角落的桌面小畫面和終端機小畫面是同一個小視窗：交換時位置不變，拖曳任何一個都會移動這個共同的位置，交換動畫從這裡開始、也落在這裡。
-- **開機程式在分頁裡跑。** 開機時要啟動的程式（例如伺服器、監測腳本）各自開成一個分頁，排在分頁欄最前面、在背景執行；關閉正在執行的開機分頁前先確認。
-- **交換動畫：** 320ms，`cubic-bezier(0.2, 0, 0, 1)`（先快後慢）。放大的畫面與縮小的畫面同時移動，側邊欄與右上角小工具同步淡出／淡入。小畫面縮到角落時圓角變成 `radius-md`。開啟「減少動態效果」時直接切換，不播動畫。
-- **終端機不會因為切換而停止。** 桌面模式時所有分頁持續在背景執行；有新輸出的分頁在細條上顯示藍色刻度。
-- **其他程式的視窗**在兩種模式下都可以開；終端機模式時它們浮在終端機上面。
+- **Click the mini view → the two views swap.** Like a video that shrinks into the corner when it ends: the desktop grows from the top-right corner to full screen while the terminal shrinks and flies into the corner, becoming the mini terminal.
+- **Click the mini terminal, or press `Ctrl + Alt + Z` → swap back.** The animation plays in reverse and you're back in the same tab, with the keyboard focus in the terminal. The shortcut works from any program.
+- **Click a tab on the left strip → swap back and switch to that tab.**
+- **Fits any resolution, any time.** Resolution, Windows scaling, taskbar position or auto-hide, monitors added or removed, a new main monitor: in either mode, even mid-swap, every view refits the main screen's work area. The terminal reflows, the mini view moves back on screen, and the desktop is captured again.
+- **The mini view stays put.** The desktop mini view and the mini terminal are one small window: swapping doesn't move it, dragging either one moves the shared spot, and the swap animation starts and ends there.
+- **Startup programs run in tabs.** Programs to start at boot (a server, a monitoring script) each get a tab, listed first in the sidebar and running in the background. Closing a running startup tab asks first.
+- **Swap animation:** 320ms, `cubic-bezier(0.2, 0, 0, 1)` (fast, then slow). The growing and shrinking views move together while the sidebar and corner widgets fade out / in. The view shrinking into the corner gets `radius-md` corners. With "reduce motion" on, the swap is instant.
+- **Switching never stops a terminal.** In desktop mode every tab keeps running in the background; a tab with new output shows a blue mark on the strip.
+- **Other programs' windows** can be opened in both modes; in terminal mode they float above the terminal.
 
-## 內容原則
+## Content rules
 
-- 介面文字短、直接，用動詞開頭：「新分頁」、「點擊放大」，不用「點此以…」。
-- 指令、路徑、檔名、分頁名稱一律用 `mono` 字體，其他介面文字用 `sans`。
-- 時間用 24 小時制（`14:05`），日期用 `2026-10-26`。
-- 不用表情符號當圖示。
+- Interface text is short and direct and starts with a verb: "New tab", "Click to enlarge", never "Click here to…".
+- Commands, paths, file names and tab names always use the `mono` font; other interface text uses `sans`.
+- Times use the 24-hour clock (`14:05`); dates look like `2026-10-26`.
+- No emoji as icons.
 
-## 視覺基礎
+## Visual foundations
 
-- **顏色：** 以 `desk` 與 `surface` 的深色為主，彩色只表達狀態。`phosphor` 是唯一的品牌色，也代表「作用中」；`focus` 是鍵盤焦點與「有新輸出」；`warn`、`error` 只在對應狀態出現。主要文字用 `ink`，次要資訊用 `ink-muted`，兩者在 `desk` 與 `surface` 上都超過 4.5:1。
-- **分頁狀態：** 作用中 `phosphor` 實心點、有新輸出 `focus` 實心點、閒置 `ink-muted` 空心點、已結束 `ink-muted` 虛線點。側邊欄和細條用同一套。
-- **文字：** 終端機內容用 `terminal`（14/20 mono），分頁名稱與快捷鍵用 mono 12px。介面標題 `title`、一般介面文字 `ui`、標註 `caption`。大型時鐘用 `clock`。
-- **間距：** 4px 網格。`space-1` 用於圖示與文字之間，`space-2` 用於元素之間，`space-4` 是面板內距，`space-6` 是離螢幕邊緣的距離。
-- **圓角：** 按鈕、分頁 `radius-sm`，小畫面、時鐘 `radius-md`，大型浮動面板 `radius-lg`。終端機本身不加圓角，貼齊螢幕。
-- **邊框而非陰影：** 面板用 `line` 1px 邊框分層，不用大陰影。
+- **Color:** mostly the dark `desk` and `surface`; color only shows state. `phosphor` is the one brand color and also means "active"; `focus` is keyboard focus and "new output"; `warn` and `error` appear only for those states. Main text is `ink`, secondary text `ink-muted`; both pass 4.5:1 on `desk` and `surface`.
+- **Tab states:** active is a solid `phosphor` dot, new output a solid `focus` dot, idle a hollow `ink-muted` dot, exited a dashed `ink-muted` dot. The sidebar and the strip use the same set.
+- **Type:** terminal content uses `terminal` (14/20 mono); tab names and shortcuts use mono 12px. Interface headings use `title`, normal interface text `ui`, notes `caption`. The big clock uses `clock`.
+- **Spacing:** a 4px grid. `space-1` between an icon and its text, `space-2` between items, `space-4` for panel padding, `space-6` for distance from the screen edge.
+- **Corners:** buttons and tabs `radius-sm`, the mini view and clock `radius-md`, large floating panels `radius-lg`. The terminal itself has no rounded corners and sits flush with the screen.
+- **Borders, not shadows:** panels are layered with a 1px `line` border, never big shadows.
 
-## 圖示
+## Icons
 
-目前沒有圖示集或標誌。需要符號時用 mono 字元（`+`、`×`、`▸`）或純文字標籤，顏色跟著狀態 token。之後若加入圖示，建議 1.5px 線條、16px 方格。
+There is no icon set or logo yet. When a symbol is needed, use mono characters (`+`, `×`, `▸`) or plain text labels, colored by state tokens. If icons are added later, use 1.5px strokes on a 16px grid.
 
-## 元件
+## Components
 
-元件是 `window.TerminalDesktop` 上的純 DOM 函式：傳入設定，回傳一個元素，由你自己放進畫面。樣式在 `components/bundle.css`，類別都以 `td-` 開頭。
+Components are plain DOM functions on `window.TerminalDesktop`: pass options, get back an element, and put it on the page yourself. Styles are in `components/bundle.css`; every class starts with `td-`.
 
-| 元件 | 模式 | 用途 |
+| Component | Mode | Purpose |
 | --- | --- | --- |
-| `TabSidebar` | 終端機 | 左側分頁欄：切換、新增、改名、關閉、選單 |
-| `TerminalArea` | 終端機 | 有系統外觀的示範終端機；實際桌面用 xterm.js 套同一組 token |
-| `MiniDesktop` | 兩種 | 右上角的即時小畫面：終端機模式顯示桌面，桌面模式顯示終端機；點擊交換 |
-| `ClockWidget` | 終端機 | 時鐘 |
-| `EdgeStrip` | 桌面 | 左邊緣細條，展開成分頁列表 |
+| `TabSidebar` | Terminal | Left tab bar: switch, add, rename, close, menu |
+| `TerminalArea` | Terminal | A demo terminal with the system's look; the real desktop uses xterm.js with the same tokens |
+| `MiniDesktop` | Both | The live mini view in the top right: the desktop in terminal mode, the terminal in desktop mode; click to swap |
+| `ClockWidget` | Terminal | Clock |
+| `EdgeStrip` | Desktop | Thin left-edge strip that opens into the tab list |
 
-版面骨架：
+Page skeleton:
 
 ```html
 <div class="td-desk">
   <!-- TabSidebar -->
   <div class="td-stage">
-    <!-- TerminalArea（或 xterm.js） -->
+    <!-- TerminalArea (or xterm.js) -->
     <div class="td-corner"><!-- MiniDesktop, ClockWidget --></div>
   </div>
 </div>
 ```
 
-實際嵌進 Windows 時，桌面程式要負責：開多個真正的終端機程序、擷取桌面畫面給小畫面（擷取時排除終端機視窗本身）、桌面模式時把細條與終端機小畫面做成永遠在最上層的獨立小視窗，以及註冊全域快捷鍵。交換動畫的最後一幀要和桌面模式的畫面完全一樣（全螢幕桌面＋角落的終端機），再切換視窗，才不會閃。
+When this runs on Windows, the desktop app is responsible for: running several real terminal processes, capturing the desktop for the mini view (leaving the terminal window itself out of the capture), making the strip and the mini terminal separate always-on-top windows in desktop mode, and registering the global shortcut. The swap animation's last frame must match desktop mode exactly (full-screen desktop plus the terminal in the corner) before the windows switch, so nothing flickers.
